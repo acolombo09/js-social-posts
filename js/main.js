@@ -93,37 +93,72 @@ const container = document.getElementById("container");
 
 // sotto consiglio di Florian, modifico l'intero contenuto del div post
 // copiando il layout html base e cambiando solo i riferimenti
+// in alcuni casi dovrò utilizzare un "accesso" più approfondito per gli oggetti
 
-posts.forEach((post) => {
-container.innerHTML +=
-`<div class="post">
-<div class="post__header">
-  <div class="post-meta">                    
-    <div class="post-meta__icon">
-      <img class="profile-pic" src="${post.author.image}" alt="Phil Mangione">                    
+function renderPosts() {
+  container.innerHTML = "";
+
+  posts.forEach((post) => {
+    container.innerHTML +=
+    `<div class="post">
+    <div class="post__header">
+      <div class="post-meta">                    
+        <div class="post-meta__icon">
+          <img class="profile-pic" src="${post.author.image}" alt="Phil Mangione">                    
+        </div>
+        <div class="post-meta__data">
+          <div class="post-meta__author">${post.author.name}</div>
+          <div class="post-meta__time">${post.created}</div>
+        </div>                    
+      </div>
     </div>
-    <div class="post-meta__data">
-      <div class="post-meta__author">${post.author.name}</div>
-      <div class="post-meta__time">${post.created}</div>
-    </div>                    
-  </div>
-</div>
-<div class="post__text">${post.content}</div>
-<div class="post__image">
-  <img src="${post.media}" alt="">
-</div>
-<div class="post__footer">
-  <div class="likes js-likes">
-    <div class="likes__cta">
-      <a class="like-button  js-like-button" href="#" data-postid="1">
-        <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
-        <span class="like-button__label">Mi Piace</span>
-      </a>
+    <div class="post__text">${post.content}</div>
+    <div class="post__image">
+      <img src="${post.media}" alt="">
     </div>
-    <div class="likes__counter">
-      Piace a <b id="like-counter-1" class="js-likes-counter">${post.likes}</b> persone
-    </div>
-  </div> 
-</div>            
-</div>`
-})
+    <div class="post__footer">
+      <div class="likes js-likes">
+        <div class="likes__cta">
+          <a class="like-button  js-like-button" href="#" data-postid="1">
+            <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
+            <span class="like-button__label">Mi Piace</span>
+          </a>
+        </div>
+        <div class="likes__counter">
+          Piace a <b id="like-counter-1" class="js-likes-counter">${post.likes}</b> persone
+        </div>
+      </div> 
+    </div>            
+    </div>`;
+  });
+  // Aggiungiamo il listener ai pulsanti "Mi Piace" dopo aver generato i post
+  const likeButtons = document.querySelectorAll(".js-like-button");
+  likeButtons.forEach((likeButton) => {
+    likeButton.addEventListener("click", likeButtonClick);
+  });
+}
+
+renderPosts();
+
+// Se clicco sul tasto “Mi Piace” cambia il colore al testo del bottone 
+// e incrementa il counter dei likes counter.
+// Salviamo in un secondo array gli id dei post ai quali abbiamo messo il like.
+
+function likeButtonClick(likeButton) {
+  // Incrementa il numero di likes
+  const likeCounter = document.querySelector(".js-likes-counter");
+  let currentLikes = parseInt(likeCounter.textContent);
+  currentLikes++;
+  likeCounter.textContent = currentLikes;
+
+  // Cambia il colore del testo del pulsante "Mi Piace"
+  likeButton.classList.add("text-success");
+}
+
+// sotto consiglio di Florian, creo il richiamo della funzione passando
+// l'elemento like button che voglio gestire al click
+
+const likeButtonElement = document.querySelector(".js-like-button");
+likeButtonElement.addEventListener("click", function () {
+  likeButtonClick(likeButtonElement);
+});
